@@ -1,9 +1,8 @@
-<<<<<<< HEAD
-# xd
-=======
-# Vue 3 + Vite
+下载环境
+npm run install
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+运行项目
+npm run dev
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
->>>>>>> 33b8a97 (Initial commit)
+项目打包
+npm run build
