@@ -8,6 +8,7 @@ const Product = () => import('@/views/product/product.vue');
 const Applicat = () => import('@/views/product/application.vue'); 
 const AppClass = () => import('@/views/product/applicatClass.vue'); 
 const ProductList = () => import('@/views/product/productList.vue');
+const ProductDetails = () => import('@/views/product/productDetails.vue');
 
 const routes = [
   {
@@ -44,7 +45,12 @@ const routes = [
     path: '/productList',
     name: 'ProductList',
     component: ProductList,
-  }
+  },
+  {
+    path: '/product/details/:id',
+    name: 'ProductDetails',
+    component: ProductDetails, 
+  },
 ];
 
 // 创建路由实例
