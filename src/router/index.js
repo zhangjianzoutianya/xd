@@ -7,6 +7,8 @@ const Register = () => import('@/views/login/register.vue');
 const Product = () => import('@/views/product/product.vue'); 
 const Applicat = () => import('@/views/product/application.vue'); 
 const AppClass = () => import('@/views/product/applicatClass.vue'); 
+const ProductList = () => import('@/views/product/productList.vue');
+
 const routes = [
   {
     path: '/',
@@ -37,6 +39,11 @@ const routes = [
     path: '/applicatClass',
     name: 'AppClass',
     component: AppClass,
+  },
+  {
+    path: '/productList',
+    name: 'ProductList',
+    component: ProductList,
   }
 ];
 

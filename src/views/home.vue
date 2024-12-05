@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed, inject } from 'vue';
-import Top from '@/components/Top.vue';
+import Top from '@/components/Top2.vue';
 
 const input = ref('')
 //API
