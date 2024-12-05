@@ -22,6 +22,11 @@ const routes = [
     name: 'Register',
     component: Register, 
   },
+  {
+    path: '/product/details/:id',
+    name: 'ProductDetails',
+    component: ProductDetails, 
+  },
 ];
 
 // 创建路由实例
