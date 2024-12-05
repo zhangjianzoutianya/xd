@@ -2,14 +2,14 @@
 export default{
   url: [
     {
-      url: 'login', //登录
+      url: 'goLogin', //登录
       type: 'post',
-      code: '',
+      code: '/login',
     },
     {
-      url: 'register', //注册
+      url: 'goRegister', //注册
       type: 'post',
-      code: '',
+      code: '/register',
     },
   ]
 }

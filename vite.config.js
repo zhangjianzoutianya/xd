@@ -36,7 +36,7 @@ export default defineConfig({
     host: "localhost",
     proxy: {
       '/api': {
-        target: '', //dev环境
+        target: 'http:www.baidu.com/api', //dev环境
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/api/, ''),
       }
