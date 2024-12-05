@@ -1,5 +1,5 @@
 下载环境
-npm run install
+npm install
 
 运行项目
 npm run dev
