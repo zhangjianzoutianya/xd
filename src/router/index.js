@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 const Home = () => import('@/views/home.vue');
 const Login = () => import('@/views/login/login.vue');
 const Register = () => import('@/views/login/register.vue');
+const ProductDetails = () => import('@/views/product/productDetails.vue');
 
 const routes = [
   {
