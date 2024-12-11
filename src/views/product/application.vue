@@ -29,6 +29,12 @@ const ezTypeOption = [{
   label: '热泵',
 }]
 
+//跳转
+const goAppClass = () =>{
+  router.push({
+    name: 'AppClass'
+  })
+}
 
 </script>
 
@@ -53,67 +59,67 @@ const ezTypeOption = [{
       </el-select>
       </div>
       <div class="prodList">
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico1.png"/>
             <p>空调/风管机组</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico2.png"/>
             <p>商用制冷</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico3.png"/>
             <p>冷却器</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico4.png"/>
             <p>特种空调</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico5.png"/>
             <p>热泵</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico1.png"/>
             <p>空调/风管机组</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico2.png"/>
             <p>商用制冷</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico3.png"/>
             <p>冷却器</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico4.png"/>
             <p>特种空调</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico1.png"/>
             <p>空调/风管机组</p>
           </div>
          </div>
-         <div class="listbox">
+          <div class="listbox" @click="goAppClass">
           <div class="list">
             <img src="@/assets/images/pico1.png"/>
             <p>空调/风管机组</p>
@@ -166,6 +172,7 @@ const ezTypeOption = [{
     .listbox{
       width: 25%;
       padding: 10px 8px;
+      cursor: pointer;
       .list{    
         text-align: center; 
         border: 1px solid #ffffff;
