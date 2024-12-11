@@ -270,19 +270,171 @@ const goProductDetails = () =>{
             </el-tab-pane>
             <el-tab-pane label="已添加产品" name="2">
               <div class="dadaTypeBox">
-                <div class="table_data2">
-                  <h5>已添加产品</h5>
+              
+                <div class="table_data1">
+                  <div class="title">
+                    <h5>
+                    产品系列 
+                  </h5>
+                  <div class="chose_box">
+                    <el-checkbox v-for="item in sortedCheckboxes" :key="item.value" v-model="item.checked">
+                    {{ item.label }}
+                  </el-checkbox>
+                  </div>
+                 
+                  </div>
+                  <div class="list_box">
+                    <div class="img" @click="goProductDetails">
+                      <img src="/src/assets/images/plist.png" alt="" width="100%">
+                    </div>
+                    <div class="text">
+                        <div class="box_top">
+                          <span>系列和DSF(S)系列 </span>
+                          <span>螺纹x螺纹，1/4"x 1/4"</span>
+                          <span>冷量范围：无</span>
+                        </div>
+                        <div class="btn">
+                          <span>文档和视觉效果</span>
+                          <span>前往商城</span>
+                        </div>
+                        <div class="my_check" >
+                          <el-checkbox v-model="checked1" label="添加至清单" size="large" />
+                        </div>
+                    </div>
+                  </div>
+                  <div class="list_box">
+                    <div class="img" @click="goProductDetails">
+                      <img src="/src/assets/images/plist.png" alt="" width="100%">
+                    </div>
+                    <div class="text">
+                        <div class="box_top">
+                          <span>系列和DSF(S)系列 </span>
+                          <span>螺纹x螺纹，1/4"x 1/4"</span>
+                          <span>冷量范围：无</span>
+                        </div>
+                        <div class="btn">
+                          <span>文档和视觉效果</span>
+                          <span>前往商城</span>
+                        </div>
+                        <div class="my_check" >
+                          <el-checkbox v-model="checked1" label="添加至清单" size="large" />
+                        </div>
+                    </div>
+                  </div>
+                  <div class="list_box">
+                    <div class="img" @click="goProductDetails">
+                      <img src="/src/assets/images/plist.png" alt="" width="100%">
+                    </div>
+                    <div class="text">
+                        <div class="box_top">
+                          <span>系列和DSF(S)系列 </span>
+                          <span>螺纹x螺纹，1/4"x 1/4"</span>
+                          <span>冷量范围：无</span>
+                        </div>
+                        <div class="btn">
+                          <span>文档和视觉效果</span>
+                          <span>前往商城</span>
+                        </div>
+                        <div class="my_check" >
+                          <el-checkbox v-model="checked1" label="添加至清单" size="large" />
+                        </div>
+                    </div>
+                  </div>
+                  <el-pagination
+        size="small"
+        background
+        layout="prev, pager, next"
+        :total="50"
+        class="mt-4"
+      />
+
                 </div>
+         
+              
               </div>
             </el-tab-pane>
             <el-tab-pane label="未添加产品" name="3">
               <div class="dadaTypeBox">
+                
                 <div class="table_data1">
-                  <h5>压缩机效率:72.5% 系统参数仅供参考</h5>
-                  <div class="table_data3">
-                   
+                  <div class="title">
+                    <h5>
+                    产品系列 
+                  </h5>
+                  <div class="chose_box">
+                    <el-checkbox v-for="item in sortedCheckboxes" :key="item.value" v-model="item.checked">
+                    {{ item.label }}
+                  </el-checkbox>
                   </div>
+                 
+                  </div>
+                  <div class="list_box">
+                    <div class="img" @click="goProductDetails">
+                      <img src="/src/assets/images/plist.png" alt="" width="100%">
+                    </div>
+                    <div class="text">
+                        <div class="box_top">
+                          <span>系列和DSF(S)系列 </span>
+                          <span>螺纹x螺纹，1/4"x 1/4"</span>
+                          <span>冷量范围：无</span>
+                        </div>
+                        <div class="btn">
+                          <span>文档和视觉效果</span>
+                          <span>前往商城</span>
+                        </div>
+                        <div class="my_check" >
+                          <el-checkbox v-model="checked1" label="添加至清单" size="large" />
+                        </div>
+                    </div>
+                  </div>
+                  <div class="list_box">
+                    <div class="img" @click="goProductDetails">
+                      <img src="/src/assets/images/plist.png" alt="" width="100%">
+                    </div>
+                    <div class="text">
+                        <div class="box_top">
+                          <span>系列和DSF(S)系列 </span>
+                          <span>螺纹x螺纹，1/4"x 1/4"</span>
+                          <span>冷量范围：无</span>
+                        </div>
+                        <div class="btn">
+                          <span>文档和视觉效果</span>
+                          <span>前往商城</span>
+                        </div>
+                        <div class="my_check" >
+                          <el-checkbox v-model="checked1" label="添加至清单" size="large" />
+                        </div>
+                    </div>
+                  </div>
+                  <div class="list_box">
+                    <div class="img" @click="goProductDetails">
+                      <img src="/src/assets/images/plist.png" alt="" width="100%">
+                    </div>
+                    <div class="text">
+                        <div class="box_top">
+                          <span>系列和DSF(S)系列 </span>
+                          <span>螺纹x螺纹，1/4"x 1/4"</span>
+                          <span>冷量范围：无</span>
+                        </div>
+                        <div class="btn">
+                          <span>文档和视觉效果</span>
+                          <span>前往商城</span>
+                        </div>
+                        <div class="my_check" >
+                          <el-checkbox v-model="checked1" label="添加至清单" size="large" />
+                        </div>
+                    </div>
+                  </div>
+                  <el-pagination
+        size="small"
+        background
+        layout="prev, pager, next"
+        :total="50"
+        class="mt-4"
+      />
+
                 </div>
+         
               </div>
             </el-tab-pane>
           </el-tabs>
