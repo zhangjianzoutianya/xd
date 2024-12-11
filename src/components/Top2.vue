@@ -1,9 +1,13 @@
 <script setup>
-import { ref , inject } from 'vue';
+import { ref, reactive, computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '@/stores/index';
 import { Search} from '@element-plus/icons-vue'
+//API
+const Api = inject('Api');
 
+const router = useRouter();
+const store = useStore(); 
 //语言
 const ezType = ref('0');
 const ezTypeOption = [{
@@ -155,16 +159,30 @@ const yaliTypeOption = [{
 
 const textarea1 = ref('')
 const textarea2 = ref('')
+
+//logo
+const goHome = () =>{
+  router.push({
+    name: 'Product'
+  })
+}
+
+//登陆页面
+const goLogin = () =>{
+  router.push({
+    name: 'Login'
+  })
+}
   </script>
 
 <template>
  <div class="loginTop">
     <div class="logo">
-      <img src="@/assets/images/logo2.png"/>
+      <img src="@/assets/images/logo2.png" @click="goHome"/>
       <div class="menuTop">
-        <span @click="">首页</span>
-        <span @click="">产品选型</span>
-        <span @click="">选型清单</span>
+        <span @click="goHome">首页</span>
+        <span @click="goProduct">产品选型</span>
+        <span @click="goProductList">选型清单</span>
         <span @click="unitClick">单位设置</span>
         <span @click="clickCert">换算工具</span>
       </div>
@@ -175,7 +193,7 @@ const textarea2 = ref('')
         />
     </div>
     <div class="lang">
-      <span>登入</span>
+      <span @click="goLogin">登入</span>
       <span>｜</span>
       <span @click="showClick">中国</span>
     </div> 
@@ -519,6 +537,7 @@ const textarea2 = ref('')
     >img{
       width: 127px;
       margin-right: 40px;
+      cursor: pointer;
     }
    
   }

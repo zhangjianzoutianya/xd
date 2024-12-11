@@ -63,6 +63,16 @@ const checkboxes = ref([
 // 排序后的多选框
 const sortedCheckboxes = ref([...checkboxes.value]);
 
+//跳转产品详情
+const goProductDetails = () =>{
+  router.push({
+    name: 'ProductDetails',
+    params: {
+      id: 0,
+    },
+
+  })
+}
 </script>
 
 <template>
@@ -148,7 +158,7 @@ const sortedCheckboxes = ref([...checkboxes.value]);
           <el-carousel height="150px" arrow="always" :autoplay="true" :interval="3000" :loop="true">
           <el-carousel-item v-for="(group, index) in groupedItems" :key="index">
             <div class="carousel-group">
-              <div class="product-item" v-for="(item, idx) in group" :key="idx">
+              <div class="product-item" v-for="(item, idx) in group" :key="idx" @click="goProductDetails">
                 <img :src="item.image" alt="Product Image" />
                 <p>{{ item.name }}</p >
               </div>
@@ -190,7 +200,7 @@ const sortedCheckboxes = ref([...checkboxes.value]);
                  
                   </div>
                   <div class="list_box">
-                    <div class="img">
+                    <div class="img" @click="goProductDetails">
                       <img src="/src/assets/images/plist.png" alt="" width="100%">
                     </div>
                     <div class="text">
@@ -209,7 +219,7 @@ const sortedCheckboxes = ref([...checkboxes.value]);
                     </div>
                   </div>
                   <div class="list_box">
-                    <div class="img">
+                    <div class="img" @click="goProductDetails">
                       <img src="/src/assets/images/plist.png" alt="" width="100%">
                     </div>
                     <div class="text">
@@ -228,7 +238,7 @@ const sortedCheckboxes = ref([...checkboxes.value]);
                     </div>
                   </div>
                   <div class="list_box">
-                    <div class="img">
+                    <div class="img" @click="goProductDetails">
                       <img src="/src/assets/images/plist.png" alt="" width="100%">
                     </div>
                     <div class="text">
@@ -417,6 +427,7 @@ const sortedCheckboxes = ref([...checkboxes.value]);
               padding: 20px 0;
               .img{
                 width: 237px;
+                cursor: pointer;
               }
               .text{
                 width: calc(100% - 237px);

@@ -73,13 +73,25 @@ const goApplicat = () =>{
     name: 'Applicat'
   })
 }
+//logo
+const goHome = () =>{
+  router.push({
+    name: 'Product'
+  })
+}
+  //登陆页面
+  const goLogin = () =>{
+    router.push({
+      name: 'Login'
+    })
+  }
 
 </script>
 
 <template>
   <div class="loginTop">
     <div class="logo">
-      <img src="@/assets/images/logo2.png"/>
+      <img src="@/assets/images/logo2.png" @click="goHome"/>
       <div class="menuTop">
         <span @click="goProduct">产品大类</span>
         <span @click="goApplicat">系统应用</span>
@@ -93,7 +105,7 @@ const goApplicat = () =>{
         />
     </div>
     <div class="lang">
-      <span>登入</span>
+      <span @click="goLogin">登入</span>
       <span>｜</span>
       <span @click="showClick">中国</span>
     </div> 
@@ -285,6 +297,7 @@ const goApplicat = () =>{
     >img{
       width: 127px;
       margin-right: 40px;
+      cursor: pointer;
     }
    
   }
