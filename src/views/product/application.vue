@@ -1,8 +1,14 @@
 <script setup>
 import { ref, reactive, computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from '@/stores/index';
 import Top from '@/components/Top.vue';
 import Foot from '@/components/Foot.vue';
+//API
+const Api = inject('Api');
+
+const router = useRouter();
+const store = useStore(); 
 
 //下拉框
 const ezType = ref('');
@@ -132,7 +138,7 @@ const ezTypeOption = [{
 <style scoped lang="less">
 .prodTop{
   background-color: #f0f0f0;
-  padding: 100px 40px 0 40px;
+  padding: 95px 40px 0 40px;
   .product{
   background-color: #cad8e5;
   padding: 80px 100px;

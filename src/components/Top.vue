@@ -277,6 +277,7 @@ const goApplicat = () =>{
   right: 7%;
   display: flex;
   justify-content: space-between;
+  z-index: 10;
   .logo{
     display: flex;
     align-items: center;
@@ -327,7 +328,7 @@ const goApplicat = () =>{
   height: 100%;
   left: 0;
   top: 0;
-  z-index: 5;
+  z-index: 12;
   .langText{
     width: 1100px;
     height: 520px;

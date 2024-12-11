@@ -3,7 +3,7 @@ import { ref, reactive, computed, onMounted, inject } from 'vue';
 import * as echarts from 'echarts';
 import { useRouter } from 'vue-router';
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-
+import Top from '@/components/Top2.vue';
 //API
 const Api = inject('Api');
 const router = useRouter();
@@ -136,6 +136,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <Top/>
   <div class="productDetails">
     <div class="box">
       <div class="preview">
