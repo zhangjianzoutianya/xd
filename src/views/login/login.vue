@@ -3,7 +3,8 @@ import { ref, reactive, computed, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '@/stores/index';
 import Top from '@/views/login/components/Top.vue';
-import { UserFilled, Lock } from '@element-plus/icons-vue'
+import { UserFilled, Lock } from '@element-plus/icons-vue';
+
 
 //API
 const Api = inject('Api');
@@ -27,6 +28,34 @@ const goHome = () =>{
 const goRegister = () =>{
   router.push({
     name: 'Register'
+  })
+}
+
+//登陆
+const goLogin = async () =>{
+  if(!userName.value){
+    ElMessage({
+      message: '用户名为空',
+      type: 'warning',
+    })
+    return
+  }
+  if(!password.value){
+    ElMessage({
+      message: '密码为空',
+      type: 'warning',
+    })
+    return
+  }
+  const res = await Api.goLogin({
+    data:{
+      userName: userName.value,
+      password: password.value,
+    }
+  })
+  ElMessage({
+    message: '登陆成功',
+    type: 'success',
   })
 }
 
@@ -58,7 +87,7 @@ onMounted(() => {
           :prefix-icon="Lock"
         />
       </div>
-      <div class="btn">
+      <div class="btn" @click="goLogin">
         登录
       </div>
       <div class="tips">
@@ -126,22 +155,6 @@ onMounted(() => {
         line-height: 1.2;
         cursor: pointer;
       }
-    }
-  }
-}
-</style>
-
-<style lang="less">
-.login{
-  .input{
-    .el-input__inner{
-      line-height: 42px;
-      height: 44px;
-      font-size: 15px;
-      color: #000;
-    }
-    .el-icon svg{
-      color: #0059a6;
     }
   }
 }

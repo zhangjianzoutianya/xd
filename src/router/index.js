@@ -4,13 +4,17 @@ import { createRouter, createWebHistory } from 'vue-router';
 const Home = () => import('@/views/home.vue');
 const Login = () => import('@/views/login/login.vue');
 const Register = () => import('@/views/login/register.vue');
+const Product = () => import('@/views/product/product.vue'); 
+const Applicat = () => import('@/views/product/application.vue'); 
+const AppClass = () => import('@/views/product/applicatClass.vue'); 
+const ProductList = () => import('@/views/product/productList.vue');
 const ProductDetails = () => import('@/views/product/productDetails.vue');
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home, 
+    component: Product, 
   },
   {
     path: '/login',
@@ -21,6 +25,26 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register, 
+  },
+  {
+    path: '/product',
+    name: 'Product',
+    component: Product,
+  },
+  {
+    path: '/application',
+    name: 'Applicat',
+    component: Applicat,
+  },
+  {
+    path: '/applicatClass',
+    name: 'AppClass',
+    component: AppClass,
+  },
+  {
+    path: '/productList',
+    name: 'ProductList',
+    component: ProductList,
   },
   {
     path: '/product/details/:id',

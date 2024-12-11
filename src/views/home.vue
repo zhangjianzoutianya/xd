@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, computed, inject } from 'vue';
-const input = ref('')
 
+const input = ref('')
 //API
 const Api = inject('Api');
 
@@ -9,7 +9,6 @@ const Api = inject('Api');
 
 <template>
   <div>
-
   </div>
 </template>
 
