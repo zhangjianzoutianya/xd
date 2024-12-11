@@ -17,19 +17,19 @@ const details = reactive({});
 const type = ref('A');
 const typeOptions = [{
   value: 'A',
-  lable: 'A',
+  label: 'A',
 },{
   value: 'B',
-  lable: 'B',
+  label: 'B',
 },{
   value: 'C',
-  lable: 'C',
+  label: 'C',
 },{
   value: 'D',
-  lable: 'D',
+  label: 'D',
 },{
   value: 'E',
-  lable: 'E',
+  label: 'E',
 }]
 
 const productData = [{
