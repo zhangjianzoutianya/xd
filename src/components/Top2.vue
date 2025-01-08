@@ -173,6 +173,13 @@ const goLogin = () =>{
     name: 'Login'
   })
 }
+//产品选型
+const goProductClass = () =>{
+  router.push({
+    name: 'Applicat'
+  })
+}
+
   </script>
 
 <template>
@@ -181,7 +188,7 @@ const goLogin = () =>{
       <img src="@/assets/images/logo2.png" @click="goHome"/>
       <div class="menuTop">
         <span @click="goHome">首页</span>
-        <span @click="goProduct">产品选型</span>
+        <span @click="goProductClass">产品选型</span>
         <span @click="goProductList">选型清单</span>
         <span @click="unitClick">单位设置</span>
         <span @click="clickCert">换算工具</span>
@@ -524,12 +531,14 @@ const goLogin = () =>{
 <style scoped lang="less">
 .loginTop{
   position: fixed;
-  top: 30px;
-  left: 7%;
-  right: 7%;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   z-index: 10;
+  background-color: #f0f0f0;
+  padding: 30px  7% 10px 7%;
   .logo{
     display: flex;
     align-items: center;

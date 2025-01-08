@@ -28,6 +28,13 @@ const ezTypeOption = [{
   label: '热泵',
 }]
 
+//跳转产品列表
+const goProductList = () =>{
+  router.push({
+    name: 'ProductList'
+  })
+}
+
 </script>
 
 <template>
@@ -58,37 +65,37 @@ const ezTypeOption = [{
          </div>
       </div>
       <div class="prodList">
-         <div class="listbox">
+         <div class="listbox" @click="goProductList">
           <div class="list">
             <img src="@/assets/images/pro1.png"/>
             <p>四通换向阀</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goProductList">
           <div class="list">
             <img src="@/assets/images/pro2.png"/>
             <p>电子膨胀阀（EEV）</p>
           </div>
          </div>
-         <div class="listbox">
+        <div class="listbox" @click="goProductList">
           <div class="list">
             <img src="@/assets/images/pro3.png"/>
             <p>热力膨胀阀</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goProductList">
           <div class="list">
             <img src="@/assets/images/pro4.png"/>
             <p>电磁阀</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goProductList">
           <div class="list">
             <img src="@/assets/images/pro5.png"/>
             <p>球阀</p>
           </div>
          </div>
-         <div class="listbox">
+         <div class="listbox" @click="goProductList">
           <div class="list">
             <img src="@/assets/images/pro11.png"/>
             <p>微通道热交换器</p>
@@ -163,6 +170,7 @@ const ezTypeOption = [{
     .listbox{
       width: 25%;
       padding: 10px 8px;
+      cursor: pointer;
       .list{    
         text-align: center; 
         border: 1px solid #ffffff;

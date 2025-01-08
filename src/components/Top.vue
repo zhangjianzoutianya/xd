@@ -284,12 +284,14 @@ const goHome = () =>{
 <style scoped lang="less">
 .loginTop{
   position: fixed;
-  top: 30px;
-  left: 7%;
-  right: 7%;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   z-index: 10;
+  background-color: #f0f0f0;
+  padding: 30px  7% 10px 7%;
   .logo{
     display: flex;
     align-items: center;
