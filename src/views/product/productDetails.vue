@@ -9,28 +9,23 @@ const Api = inject('Api');
 const router = useRouter();
 
 //产品id
-const { id } = router.currentRoute.value.params;
+const cateId = router.currentRoute.value.params.id;
+const secondId = ref(null);
+const refrigerant = ref(null);
 
 //产品详情数据
-const details = reactive({});
+const productLoad = ref(null);
+const proCateItem = ref(null);
+const selectionP = ref(null);
+const productInfo = ref(null);
 
-const type = ref('A');
-const typeOptions = [{
-  value: 'A',
-  label: 'A',
-},{
-  value: 'B',
-  label: 'B',
-},{
-  value: 'C',
-  label: 'C',
-},{
-  value: 'D',
-  label: 'D',
-},{
-  value: 'E',
-  label: 'E',
-}]
+const typeOptions = reactive({list: []});
+const refrigerantList = reactive({list: []});
+
+const proListData = reactive({list: []});
+const proList2Data = reactive({list: []});
+const coilListData = reactive({list: []});
+const systemParameterData = reactive({list: []});
 
 const productData = [{
   key: '1',
@@ -112,15 +107,27 @@ const initChart = () => {
       },
     ],
   };
-
   // 设置配置项
   chartInstance.setOption(option);
 }
 
+//选择型号
+const handleSecondId = (param) => {
+  secondId.value = param;
+  proCateItem.value = productLoad.value.proCateList.find(item => item.cateId === param);
+  //获取工况参数
+  getSelectionP();
+}
+
+//选择制冷剂
+const handleRefrigerant = (param) => {
+  refrigerant.value = param;
+  //获取产品数据
+  getProductInfo();
+}
 
 //选择产品型号
 const handleProductDataChange = (param) => {
-  console.log(param);
   currentProductData.value = param;
 }
 
@@ -129,8 +136,87 @@ const handleDadaType = (param) =>{
   console.log(param);
 }
 
+const getProductLoad = async () => {
+  const res = await Api.getProductLoad({
+    cateId,
+  })
+  if(res.status === 1){
+    productLoad.value = res;
+    secondId.value = res.proCateList[0]?.cateId;
+    proCateItem.value = res.proCateList[0];
+    typeOptions.list = res.proCateList.map(item => ({
+      key: item.cateId,
+      value: item.cateId,
+      label: item.title,
+    }));
+    refrigerant.value = res.refrigerantList[0];
+    refrigerantList.list = res.refrigerantList.map(item => ({
+      key: item,
+      value: item,
+      label: item,
+    }));
+    //获取工况参数
+    getSelectionP();
+  }
+}
+
+const getSelectionP = async () => {
+  const res = await Api.getSelectionP({
+    cateId,
+    secondId: secondId.value,
+  })
+  if(res.status === 1){
+    selectionP.value = res;
+    //获取产品数据
+    await getProductInfo();
+    initChart();
+  }
+}
+
+const getProductInfo = async () => {
+  const res = await Api.getProductInfo({
+    cateId,
+    secondId: secondId.value,
+    refrigerant: refrigerant.value,
+  })
+  if(res.status === 1){
+    productInfo.value = res;
+    if(res.proList.tbody.length > 0){
+      proListData.list = res.proList.tbody.map(item => {
+        return {
+          status: item.status,
+          ...item.list,
+        }
+      });
+    }
+    if(res.proList2.tbody.length > 0){
+      proList2Data.list = res.proList2.tbody.map(item => {
+        return {
+          ...item,
+        }
+      });
+      console.log(proList2Data.list);
+    }
+    if(res.coilList.tbody.length > 0){
+      coilListData.list = res.coilList.tbody.map(item => {
+        return {
+          ...item,
+        }
+      });
+    }
+    if(res.systemParameter.tbody.length > 0){
+      systemParameterData.list = res.systemParameter.tbody.map(item => {
+        return {
+          ...item,
+        }
+      });
+    }
+  }
+}
+
 onMounted(() => {
-  initChart();
+  //获取产品详情
+  getProductLoad();
 });
 
 </script>
@@ -139,28 +225,28 @@ onMounted(() => {
   <Top/>
   <div class="productDetails">
     <div class="box">
-      <div class="preview">
+      <div class="preview" v-if="productLoad">
         <h5>
           <span>首页</span>
           <el-icon><ArrowLeft/></el-icon>
-          <span>电磁阀</span>
-          <el-icon><ArrowLeft/></el-icon>
-          <span>MDF</span>
+          <span>{{ productLoad.className }}</span>
+          <el-icon v-if="secondId"><ArrowLeft/></el-icon>
+          <span v-if="secondId">{{ proCateItem.title }}</span>
         </h5>
         <div class="name">
-          <p>安装位置：液体管路A</p>
-          <img src="@/assets/images/productDetails_1.jpg"/>
+          <img :src="productLoad.pic1"/>
         </div>
         <div class="type">
           <div class="img">
-            <img src="@/assets/images/productDetails_2.png"/>
+            <img :src="proCateItem.pic"/>
           </div>
           <div class="select">
             <p>型号</p>
             <el-select
-              v-model="type">
+              v-model="secondId"
+              @change="handleSecondId">
               <el-option
-                v-for="item in typeOptions"
+                v-for="item in typeOptions.list"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -168,14 +254,7 @@ onMounted(() => {
             </el-select>
           </div>
         </div>
-        <div class="txt">
-          适用介质温度:-30℃/+70℃
-          <br/>
-          最高工作压力:4.3MPa
-          <br/>
-          ·适用机型:家用空调、热泵热水器、商用制冷
-          <br/>
-          ·外塑封线圈，耐候性强
+        <div class="txt" v-html="proCateItem.content">
         </div>
       </div>
       <div class="data">
@@ -188,12 +267,20 @@ onMounted(() => {
             </span>
           </h5>
           <div class="con">
-            <div class="item">
+            <div class="item" v-if="proCateItem && proCateItem.is_select_refrigerant === 1">
               <p>制冷剂</p>
-              <el-input
-                value="R407"/>
+              <el-select
+                v-model="refrigerant"
+                @change="handleRefrigerant">
+                <el-option
+                  v-for="item in refrigerantList.list"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </div>
-            <div class="item">
+            <div class="item" v-if="selectionP">
               <p>选择标准</p>
               <el-input
                 value="R407"/>
@@ -202,78 +289,115 @@ onMounted(() => {
               <span>查询</span>
             </div>
           </div>
-          <div class="con">
+          <div class="con" v-if="selectionP">
             <div class="item">
               <h5>能力</h5>
-              <div class="list">
-                <p>制冷量</p>
+              <div 
+                class="list" 
+                v-for="(item, index) in selectionP?.qperatingParameter[0]?.options" :key="index">
+                <p>{{ item.title }}</p>
                 <el-input
-                  value="R407"/>
+                  v-model="item.value"/>
                 <el-select
-                  value="kW">
+                  v-model="item.unit">
+                  <el-option
+                    v-for="items in item.unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
                 </el-select>
-              </div>
-              <div class="list">
-                <p>流量质量</p>
-                <el-input
-                  value="30.0"/>
-                <el-input
-                  value="kg/s"/>  
               </div>
             </div>
             <div class="item">
               <h5>蒸发</h5>
-              <div class="list">
-                <p>蒸发温度</p>
+              <div class="list" v-for="(item, index) in selectionP?.qperatingParameter.slice(1, 4)" :key="index">
+                <p v-if="item.tagType === 'select'">
+                  <el-select
+                    v-model="item.option">
+                    <el-option
+                      v-for="items in item.options"
+                      :key="items.name"
+                      :label="items.title"
+                      :value="items.name"
+                    />
+                  </el-select>
+                </p>
+                <p v-else>{{item.options[0].title}}</p>
                 <el-input
-                  value="7"/>
+                  v-model="item.options.find(items => items.name === item.option).value"
+                  v-if="item.tagType === 'select'"/>
+                <el-input
+                  v-model="item.options[0].value"
+                  v-else/>  
                 <el-select
-                  value="C">
+                  v-model="item.options.find(items => items.name === item.option).unit"
+                  v-if="item.tagType === 'select'">
+                  <el-option
+                    v-for="items in item.options.find(items => items.name === item.option).unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
                 </el-select>
-              </div>
-              <div class="list">
-                <p>额外过热度</p>
-                <el-input
-                  value="5"/>
-                <el-input
-                  value="K"/>  
-              </div>
-              <div class="list">
-                <p>额外过冷度</p>
-                <el-input
-                  value="0"/>
-                <el-input
-                  value="K"/>  
+                <el-select
+                  v-model="item.options[0].unit"
+                  v-else>
+                  <el-option
+                    v-for="items in item.options[0].unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
+                </el-select>              
               </div>
             </div>
             <div class="item">
               <h5>冷凝</h5>
-              <div class="list">
-                <p>冷凝温度</p>
+              <div class="list" v-for="(item, index) in selectionP?.qperatingParameter.slice(4, 7)" :key="index">
+                <p v-if="item.tagType === 'select'">
+                  <el-select
+                    v-model="item.option">
+                    <el-option
+                      v-for="items in item.options"
+                      :key="items.name"
+                      :label="items.title"
+                      :value="items.name"
+                    />
+                  </el-select>
+                </p>
+                <p v-else>{{item.options[0].title}}</p>
                 <el-input
-                  value="45"/>
+                  v-model="item.options.find(items => items.name === item.option).value"
+                  v-if="item.tagType === 'select'"/>
+                <el-input
+                  v-model="item.options[0].value"
+                  v-else/>  
                 <el-select
-                  value="C">
+                  v-model="item.options.find(items => items.name === item.option).unit"
+                  v-if="item.tagType === 'select'">
+                  <el-option
+                    v-for="items in item.options.find(items => items.name === item.option).unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
                 </el-select>
-              </div>
-              <div class="list">
-                <p>过冷度</p>
-                <el-input
-                  value="5"/>
-                <el-input
-                  value="K"/>  
-              </div>
-              <div class="list">
-                <p>额外过冷度</p>
-                <el-input
-                  value="5"/>
-                <el-input
-                  value="K"/>  
+                <el-select
+                  v-model="item.options[0].unit"
+                  v-else>
+                  <el-option
+                    v-for="items in item.options[0].unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
+                </el-select>              
               </div>
             </div>
           </div>
         </div>
-        <div class="data_b">
+        <div class="data_b" v-if="productInfo">
           <h5>
             选择产品系列
             <p>
@@ -288,24 +412,19 @@ onMounted(() => {
           <div class="table">
             <el-table
               border
-              :data="productData"
+              :data="proListData.list"
               highlight-current-row
               @current-change="handleProductDataChange">
-              <el-table-column property="o" label="选择">
-                <span class="dataRow"></span>
+              <el-table-column property="status" label="选择">
+                <template #default="{ row }">
+                  <span class="dataRow" :class="{'dataRow1': row.status === 1, 'dataRow0': row.status === 0}" ></span>
+                </template>
               </el-table-column>
-              <el-table-column property="a" label="型号"/>
-              <el-table-column property="b" label="口径[mm]"/>
-              <el-table-column property="c" label="标称制冷量[kW]"/>
-              <el-table-column property="d" label="负荷%"/>
-              <el-table-column property="e" label="压降[bar]"/>
-              <el-table-column property="f" label="流速[m/s]"/>
-              <el-table-column property="g" label="全开步数"/>
-              <el-table-column property="h" label="提示"/>
+              <el-table-column :property="index.toString()" :label="item" v-for="(item, index) in productInfo.proList.thead" :key="index"/>
             </el-table>
           </div>
         </div>
-        <div class="data_c">
+        <div class="data_c" v-if="productInfo">
           <el-tabs 
             v-model="dadaType" 
             class="dadaType" 
@@ -314,51 +433,48 @@ onMounted(() => {
               <div class="dadaTypeBox">
                 <div class="table_data1">
                   <h5>
-                    产品型号 <span>DPF0.8A-001</span> <i>三维简图</i>
+                    产品型号 <span>{{ productInfo.proList2.title }}</span> <i>三维简图</i>
                   </h5>
                   <el-table
-                    :data="productData"
+                    :data="proList2Data.list"
                     border
                     highlight-current-row
                     @current-change="handleProductDataChange">
-                    <el-table-column property="o" label="选择">
-                      <span class="dataRow"></span>
-                    </el-table-column>
-                    <el-table-column property="a" label="型号"/>
-                    <el-table-column property="b" label="口径[mm]"/>
-                    <el-table-column property="c" label="标称制冷量[kW]"/>
-                    <el-table-column property="d" label="负荷%"/>
-                    <el-table-column property="e" label="压降[bar]"/>
-                    <el-table-column property="f" label="流速[m/s]"/>
-                    <el-table-column property="g" label="全开步数"/>
-                    <el-table-column property="h" label="提示"/>
+                    <el-table-column :property="index.toString()" :label="item" v-for="(item, index) in productInfo.proList2.thead" :key="index"/>
                   </el-table>
                 </div>
                 <div class="table_data1">
                   <h5>
-                    线圈型号 <span>DPFX06-055</span>
+                    线圈型号 <span>{{ productInfo.coilList.title }}</span>
                   </h5>
                   <el-table
-                    :data="productData"
+                    :data="coilListData.list"
                     border
                     highlight-current-row
                     @current-change="handleProductDataChange">
-                    <el-table-column property="o" label="选择">
-                      <span class="dataRow"></span>
-                    </el-table-column>
-                    <el-table-column property="a" label="型号"/>
-                    <el-table-column property="b" label="口径[mm]"/>
-                    <el-table-column property="c" label="标称制冷量[kW]"/>
-                    <el-table-column property="d" label="负荷%"/>
-                    <el-table-column property="e" label="压降[bar]"/>
-                    <el-table-column property="f" label="流速[m/s]"/>
-                    <el-table-column property="g" label="全开步数"/>
-                    <el-table-column property="h" label="提示"/>
+                    <el-table-column :property="index.toString()" :label="item" v-for="(item, index) in productInfo.coilList.thead" :key="index"/>
                   </el-table>
                 </div>
               </div>
             </el-tab-pane>
             <el-tab-pane label="系统参数" name="2">
+              <div class="dadaTypeBox">
+                <div class="table_data1">
+                  <h5>压缩机效率:{{ productInfo.systemParameter.title }} 系统参数仅供参考</h5>
+                  <div class="table_data3">
+                    <el-table
+                      :data="systemParameterData.list"
+                      border
+                      highlight-current-row
+                      @current-change="handleProductDataChange">
+                      <el-table-column :property="index.toString()" :label="item" v-for="(item, index) in productInfo.systemParameter.thead" :key="index"/>
+                    </el-table>
+                    <!-- <img src="@/assets/images/productDetails_1.jpg"/> -->
+                  </div>
+                </div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="性能曲线" name="3">
               <div class="dadaTypeBox">
                 <div class="table_data2">
                   <h5>电子膨胀阀</h5>
@@ -366,39 +482,12 @@ onMounted(() => {
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="性能曲线" name="3">
-              <div class="dadaTypeBox">
-                <div class="table_data1">
-                  <h5>压缩机效率:72.5% 系统参数仅供参考</h5>
-                  <div class="table_data3">
-                    <el-table
-                      :data="productData"
-                      border
-                      highlight-current-row
-                      @current-change="handleProductDataChange">
-                      <el-table-column property="o" label="选择">
-                        <span class="dataRow"></span>
-                      </el-table-column>
-                      <el-table-column property="a" label="型号"/>
-                      <el-table-column property="b" label="口径[mm]"/>
-                      <el-table-column property="c" label="标称制冷量[kW]"/>
-                      <el-table-column property="d" label="负荷%"/>
-                      <el-table-column property="e" label="压降[bar]"/>
-                      <el-table-column property="f" label="流速[m/s]"/>
-                      <el-table-column property="g" label="全开步数"/>
-                      <el-table-column property="h" label="提示"/>
-                    </el-table>
-                    <img src="@/assets/images/productDetails_1.jpg"/>
-                  </div>
-                </div>
-              </div>
-            </el-tab-pane>
           </el-tabs>
-          <div class="btn">
+          <!-- <div class="btn">
             <span>添加至选型清单</span>
             <span>文档和视觉效果</span>
             <span>附件及备份</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -440,14 +529,9 @@ onMounted(() => {
       }
       .name{
         margin-bottom: 30px;
-        p{
-          font-size: 15px;
-          color: #393939;
-          margin-bottom: 15px;
-        }
         img{
           display: block;
-          width: 96%;
+          width: 100%;
           margin: 0 auto;
         }
       }
@@ -470,12 +554,6 @@ onMounted(() => {
             font-size: 15px;
             color: #a5a5a5;
             margin-bottom: 6px;
-          }
-        }
-        .txt{
-          p{
-            font-size: 15px;
-            color: #080808;
           }
         }
       }
@@ -539,8 +617,10 @@ onMounted(() => {
               align-items: center;
               margin-bottom: 8px;
               p{
-                width: 90px;
+                width: 100px;
                 margin-bottom: 0px;
+                padding-right: 10px;
+
               }
             }
           }
@@ -674,6 +754,14 @@ onMounted(() => {
 
 <style lang="less">
 .productDetails{
+  .preview{
+    .txt{
+      p{
+        font-size: 15px;
+        color: #080808;
+      }
+    }
+  }
   .data{
     .item{
       .el-input{
@@ -688,6 +776,19 @@ onMounted(() => {
           font-size: 13px;
           color: #080808;
         }
+      }
+      .el-select{
+        width: 200px;
+      }
+      .el-select__wrapper{
+        background-color: #e7e7e7;
+        padding: 0 4px;
+      }
+      .el-select__selected-item{
+        line-height: 20px;
+        height: 22px;
+        font-size: 13px;
+        color: #080808;
       }
       .list{
         .el-input{
@@ -709,6 +810,11 @@ onMounted(() => {
         .el-input:nth-child(3){
           width: 60px;
         }
+        p{
+          .el-select{
+            width: 90px;
+          }
+        }
       }
     }
     .dataRow{
@@ -718,6 +824,18 @@ onMounted(() => {
       border-radius: 50%;
       border: 1px solid #b7b7b7;
       background-color: #ffffff;
+    }
+    .dataRow1{
+      border: 1px solid #787878;
+      background-color: #83e1db;
+    }
+    .dataRow2{
+      border: 1px solid #787878;
+      background-color: #ffffff;
+    }
+    .dataRow0{
+      border: 1px solid #787878;
+      background-color: #7c7c7c;
     }
     .el-table__body tr.current-row>td.el-table__cell{
       background-color: #6bc7df;

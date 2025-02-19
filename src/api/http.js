@@ -6,6 +6,9 @@ const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 })
+instance.defaults.withCredentials = true;
+instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+instance.defaults.headers.post['X-Requested-With'] = undefined;
 
 // 请求拦截器
 instance.interceptors.request.use(
@@ -16,6 +19,7 @@ instance.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `${token}` // 在请求头中加入 token
       }
+      config.headers.language = store.language || 1;
     }
     return config;
   },

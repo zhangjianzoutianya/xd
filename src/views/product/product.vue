@@ -9,12 +9,41 @@ const Api = inject('Api');
 
 const router = useRouter();
 const store = useStore(); 
+
+const page = ref(1);
+const pageCount = ref(0);
+const pageSizes = ref(10);
+
+const productCate = reactive({list:[]});
+
 //跳转详情
-const goProductList = () =>{
+const goProductList = (id) =>{
   router.push({
-    name: 'ProductList'
+    name: 'ProductDetails',
+    params: {
+      id: id,
+    },
   })
 }
+
+//获取产品大类
+const getProductCateList = async () => {
+  const res = await Api.getProductCateList({
+    page: page.value,
+  });
+  if(res.status === 1){
+    pageCount.value = res.lastPage;
+    pageSizes.value = res.perPage;
+    productCate.list = res.list;
+  }
+}
+
+//created
+const onCreated = async () => {
+  //获取产品大类
+  getProductCateList();
+}
+onCreated();
 </script>
 
 <template>
@@ -24,83 +53,20 @@ const goProductList = () =>{
       <div class="product">
       <h5>SmartFit选型系统<span>(网页版)</span></h5>
       <div class="prodList">
-         <div class="listbox" @click="goProductList">
+        <div class="listbox" v-for="item in productCate.list" :key="item.cateId" @click="goProductList(item.cateId)">
           <div class="list">
-            <img src="@/assets/images/pro1.png"/>
-            <p>四通换向阀</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro2.png"/>
-            <p>电子膨胀阀（EEV）</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro3.png"/>
-            <p>热力膨胀阀</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro4.png"/>
-            <p>电磁阀</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList"> 
-          <div class="list">
-            <img src="@/assets/images/pro5.png"/>
-            <p>球阀</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList"  >
-          <div class="list">
-            <img src="@/assets/images/pro6.png"/>
-            <p>止回阀</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro7.png"/>
-            <p>充气阀</p>
-          </div>
-         </div>
-          <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro8.png"/>
-            <p>二氧化碳（R744）产品</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro9.png"/>
-            <p>检修阀</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro10.png"/>
-            <p>管翅式热交换器</p>
-          </div>
-         </div>
-         <div class="listbox" @click="goProductList">
-          <div class="list">
-            <img src="@/assets/images/pro11.png"/>
-            <p>微通道热交换器</p>
+            <img :src="item.pic"/>
+            <p>{{item.title}}</p>
           </div>
          </div>
        </div>
-
       <el-pagination
         size="small"
         background
         layout="prev, pager, next"
-        :total="50"
-        class="mt-4"
-      />
-
-    
+        :page-count="pageCount"
+        :page-size="pageSizes"
+        class="mt-4"/>    
     </div>
     <Foot/>   
   </div>

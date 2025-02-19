@@ -36,9 +36,9 @@ export default defineConfig({
     host: "localhost",
     proxy: {
       '/api': {
-        target: 'http:www.baidu.com/api', //dev环境
+        target: 'http://api.ilkhome.com', //dev环境
         changeOrigin: true, //是否跨域
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, '/api/index'),
       }
     }
   },

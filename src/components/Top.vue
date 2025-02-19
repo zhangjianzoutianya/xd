@@ -1,10 +1,8 @@
 <script setup>
-import { ref , inject } from 'vue';
+import { ref, reactive, computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '@/stores/index';
 import { Search ,ArrowRight,StarFilled} from '@element-plus/icons-vue'
-import { fa } from 'element-plus/es/locales.mjs';
-
 //API
 const Api = inject('Api');
 
@@ -14,32 +12,19 @@ const store = useStore();
 //搜索
 const searchKey = ref('')
 //语言
-const ezType = ref('0');
-const ezTypeOption = [{
-  value: '0',
-  label: '中文',
-},{
-  value: '1',
-  label: '英文',
-}]
-//地区
-const country = ref('0');
-const ezCountry= [{
-  value: '0',
-  label: '中国',
-},{
-  value: '1',
-  label: '美国',
-}]
+const language = ref(store.language || 1);
+const languageValue = ref(store.languageOption.find(item => item.value === language.value).label);
+
 //控制弹窗是否显示
-const showLang=ref(false)
+const showLang = ref(false)
 //取消选择语言
 const cancleLang=()=>{
   showLang.value=false
 }
 //选择语言弹窗
 const showClick=()=>{
-  showLang.value=true
+  console.log(language.value, '123')
+  showLang.value = true
 }
 
 //弹窗认证证书
@@ -58,6 +43,16 @@ const openRefrig=()=>{
 }
 const cancelRefrig=()=>{
   showRefrig.value=false
+}
+
+//选择语言
+const changeLanguage = () => {
+  showLang.value = false;
+  languageValue.value = store.languageOption.find(item => item.value === language.value).label;
+  store.setLanguage(language.value);
+  setTimeout(() => {
+    window.location.reload();
+  }, 100);
 }
 
 
@@ -80,11 +75,17 @@ const goHome = () =>{
   })
 }
   //登陆页面
-  const goLogin = () =>{
-    router.push({
-      name: 'Login'
-    })
-  }
+const goLogin = () =>{
+  router.push({
+    name: 'Login'
+  })
+}
+
+//created
+const onCreated = async () => {
+
+}
+onCreated();
 
 </script>
 
@@ -105,37 +106,24 @@ const goHome = () =>{
         />
     </div>
     <div class="lang">
-      <span @click="goLogin">登入</span>
-      <span>｜</span>
-      <span @click="showClick">中国</span>
+      <!-- <span @click="goLogin">登入</span>
+      <span>｜</span> -->
+      <span @click="showClick">{{ languageValue}}</span>
     </div> 
   </div>
 
   <div class="language"  v-if="showLang">   
      <div class="langText">
       <h5>提示</h5>
-      <p>Tips：请选择国家和语言</p>
+      <p>Tips：请选择语言</p>
       <div class="input">
         <span>语言</span>
         <el-select 
-          v-model="ezType" 
+          v-model="language" 
           size="large">
           <el-option
-            v-for="item in ezTypeOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </div>
-      <div class="input">
-        <span>国家或地区</span>
-        <el-select 
-          v-model="ezType" 
-          size="large">
-          <el-option
-            v-for="item in ezCountry"
-            :key="item.value"
+            v-for="item in store.languageOption"
+            :key="item.key"
             :label="item.label"
             :value="item.value"
           />
@@ -143,7 +131,7 @@ const goHome = () =>{
       </div>
       <div class="btn"> 
         <span @click="cancleLang">取消</span>
-        <span class="btnSure">确定</span>
+        <span class="btnSure" @click="changeLanguage">确定</span>
       </div>
      </div>
 
@@ -346,7 +334,7 @@ const goHome = () =>{
   z-index: 12;
   .langText{
     width: 1100px;
-    height: 520px;
+    height: 370px;
     background-color: #ffffff;
     border-radius: 10px;
     position: absolute;

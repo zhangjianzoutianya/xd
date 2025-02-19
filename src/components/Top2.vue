@@ -8,15 +8,11 @@ const Api = inject('Api');
 
 const router = useRouter();
 const store = useStore(); 
+
 //语言
-const ezType = ref('0');
-const ezTypeOption = [{
-  value: '0',
-  label: '中文',
-},{
-  value: '1',
-  label: '英文',
-}]
+const language = ref(store.language || 1);
+const languageValue = ref(store.languageOption.find(item => item.value === language.value).label);
+
 //控制弹窗是否显示
 const showLang=ref(false)
 //取消选择语言
@@ -180,7 +176,13 @@ const goProductClass = () =>{
   })
 }
 
-  </script>
+//created
+const onCreated = async () => {
+  
+}
+onCreated();
+
+</script>
 
 <template>
  <div class="loginTop">
@@ -189,9 +191,9 @@ const goProductClass = () =>{
       <div class="menuTop">
         <span @click="goHome">首页</span>
         <span @click="goProductClass">产品选型</span>
-        <span @click="goProductList">选型清单</span>
+        <!-- <span @click="goProductList">选型清单</span> -->
         <span @click="unitClick">单位设置</span>
-        <span @click="clickCert">换算工具</span>
+        <!-- <span @click="clickCert">换算工具</span> -->
       </div>
       <el-input
           v-model="searchKey" size="large"  
@@ -200,35 +202,22 @@ const goProductClass = () =>{
         />
     </div>
     <div class="lang">
-      <span @click="goLogin">登入</span>
-      <span>｜</span>
-      <span @click="showClick">中国</span>
+      <!-- <span @click="goLogin">登入</span>
+      <span>｜</span> -->
+      <span @click="showClick">{{ languageValue }}</span>
     </div> 
   </div>
   <div class="language"  v-if="showLang">   
      <div class="langText">
       <h5>提示</h5>
-      <p>Tips：请选择国家和语言</p>
+      <p>Tips：请选择语言</p>
       <div class="input">
         <span>语言</span>
         <el-select 
-          v-model="ezType" 
+          v-model="language" 
           size="large">
           <el-option
-            v-for="item in ezTypeOption"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </div>
-      <div class="input">
-        <span>国家或地区</span>
-        <el-select 
-          v-model="ezType" 
-          size="large">
-          <el-option
-            v-for="item in ezCountry"
+            v-for="item in store.languageOption"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -237,7 +226,7 @@ const goProductClass = () =>{
       </div>
       <div class="btn"> 
         <span @click="cancleLang">取消</span>
-        <span class="btnSure">确定</span>
+        <span class="btnSure" @click="changeLanguage">确定</span>
       </div>
      </div>
 
