@@ -77,7 +77,8 @@ onCreated();
   background-color: #f0f0f0;
   padding: 95px 40px 0 40px;
   .product{
-  background-color: #cad8e5;
+  background: url(../../../src/assets/images/jianbg.png) no-repeat;
+  background-size: cover;
   padding: 80px 100px;
   border-radius: 5px;
   h5{
