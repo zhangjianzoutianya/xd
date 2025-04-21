@@ -27,6 +27,8 @@ const proList2Data = reactive({ list: [] });
 const coilListData = reactive({ list: [] });
 const systemParameterData = reactive({ list: [] });
 
+const oldUnitValues = reactive({});
+
 //阀件管路
 const pipe = ref(null);
 
@@ -145,6 +147,18 @@ const handleSecondId = (param) => {
   proCateItem.value = productLoad.value.proCateList.find(
     (item) => item.cateId === param
   );
+  refrigerantList.list = proCateItem.value.refrigerantList?.map((item) => ({
+    key: item,
+    value: item,
+    label: item,
+  }));
+  console.log(refrigerantList);
+  if (refrigerantList.list) {
+    refrigerant.value = refrigerantList?.list[0].value;
+  } else {
+    refrigerant.value = null;
+    refrigerantList.list = [];
+  }
   console.log(secondId.value, proCateItem.value);
   //获取工况参数
   getSelectionP();
@@ -160,6 +174,14 @@ const handleRefrigerant = (param) => {
 //选择产品型号
 const handleProductDataChange = (param) => {
   currentProductData.value = param;
+  console.log(currentProductData.value);
+  proList2Data.list = productInfo.value.proList2.tbody[
+    currentProductData.value[0]
+  ].map((item) => {
+    return {
+      ...item,
+    };
+  });
 };
 
 //数据类型切换
@@ -173,6 +195,7 @@ const getProductLoad = async () => {
   });
   if (res.status === 1) {
     productLoad.value = res;
+    pipe.value = Number(res.pipeline.selectedValue);
     secondId.value = res.proCateList[0]?.cateId;
     proCateItem.value = res.proCateList[0];
     typeOptions.list = res.proCateList.map((item) => ({
@@ -180,14 +203,16 @@ const getProductLoad = async () => {
       value: item.cateId,
       label: item.model,
     }));
-    refrigerant.value = res.refrigerantList[0];
     refrigerantList.list = res.proCateList
       .find((item) => item.cateId === secondId.value)
-      .refrigerantList.map((item) => ({
+      ?.refrigerantList?.map((item) => ({
         key: item,
         value: item,
         label: item,
       }));
+    if (refrigerantList.list) {
+      refrigerant.value = refrigerantList?.list[0].value;
+    }
     //获取工况参数
     getSelectionP();
   }
@@ -200,6 +225,11 @@ const getSelectionP = async () => {
   });
   if (res.status === 1) {
     selectionP.value = res;
+    res.qperatingParameter.forEach((item) => {
+      item.options.forEach((items) => {
+        oldUnitValues[items.name] = items.unit;
+      });
+    });
     //获取产品数据
     await getProductInfo();
     initChart();
@@ -207,43 +237,130 @@ const getSelectionP = async () => {
 };
 
 const getProductInfo = async () => {
+  const qperatingParameter = selectionP.value.qperatingParameter;
   const res = await Api.getProductInfo({
     cateId,
     secondId: secondId.value,
     refrigerant: refrigerant.value,
+    pipe: pipe.value,
+    qcIndex: qperatingParameter[0].option === "Coolingcapacity" ? 0 : 1,
+    qc: qperatingParameter[0].options.find(
+      (items) => items.name === qperatingParameter[0].option
+    ).value,
+    qcUnit: qperatingParameter[0].options.find(
+      (items) => items.name === qperatingParameter[0].option
+    ).unit,
+    tevapIndex: qperatingParameter[1].option === "EvaporatTemp" ? 0 : 1,
+    tevap: qperatingParameter[1].options.find(
+      (items) => items.name === qperatingParameter[1].option
+    ).value,
+    tevapUnit: qperatingParameter[1].options.find(
+      (items) => items.name === qperatingParameter[1].option
+    ).unit,
+    tSuper: qperatingParameter[2].options[0].value,
+    tSuperUnit: qperatingParameter[2].options[0].unit,
+    tSuper2: qperatingParameter[3].options[0].value,
+    tSuper2Unit: qperatingParameter[3].options[0].unit,
+    tcondIndex: qperatingParameter[4].option === "CondensationTemp" ? 0 : 1,
+    tcond: qperatingParameter[4].options.find(
+      (items) => items.name === qperatingParameter[4].option
+    ).value,
+    tcondUnit: qperatingParameter[4].options.find(
+      (items) => items.name === qperatingParameter[4].option
+    ).unit,
+    validTSub: qperatingParameter[5].options[0].value,
+    validTSubUnit: qperatingParameter[5].options[0].unit,
+    validTSub2: qperatingParameter[6].options[0].value,
+    validTSub2Unit: qperatingParameter[6].options[0].unit,
+    selectIndex:
+      qperatingParameter[7].tagType === "select"
+        ? ["2", "3", "4", "6", "7", "8"].includes(cateId)
+          ? qperatingParameter[7].option === "PressureDrop"
+            ? 0
+            : qperatingParameter[7].option === "Velocity"
+            ? 1
+            : 2
+          : ["9", "10"].includes(cateId)
+          ? qperatingParameter[7].option === "AORC"
+            ? 0
+            : qperatingParameter[7].option === "Velocity"
+            ? 1
+            : 2
+          : ["11"].includes(cateId)
+          ? qperatingParameter[7].option === "STemperatureDrop"
+            ? 0
+            : 1
+          : 0
+        : 0,
+    inputValue: ["1"].includes(cateId)
+      ? qperatingParameter[7].options[0].value
+      : qperatingParameter[7].options.find(
+          (items) => items.name === qperatingParameter[7].option
+        ).value,
+    selectUnit: ["1", "5"].includes(cateId)
+      ? ""
+      : qperatingParameter[7].options.find(
+          (items) => items.name === qperatingParameter[7].option
+        ).unit,
+    radioValue:
+      cateId == "8"
+        ? qperatingParameter[8].options.find(
+            (items) => items.name === qperatingParameter[8].option
+          ).value
+        : "",
+    inputValue1: cateId == "5" ? qperatingParameter[8].options[0].value : "",
   });
   if (res.status === 1) {
     productInfo.value = res;
-    if (res.proList.tbody.length > 0) {
+    let proList2Type = null;
+    if (res.proList?.tbody?.length > 0) {
       proListData.list = res.proList.tbody.map((item) => {
         return {
           status: item.status,
           ...item.list,
         };
       });
+      proList2Type = res.proList.tbody.find((item) => item.status === 1)
+        ?.list[0];
     }
-    if (res.proList2.tbody.length > 0) {
-      proList2Data.list = res.proList2.tbody.map((item) => {
+    console.log(proList2Type);
+    if (proList2Type) {
+      proList2Data.list = res.proList2.tbody[proList2Type].map((item) => {
         return {
           ...item,
         };
       });
       console.log(proList2Data.list);
     }
-    if (res.coilList.tbody.length > 0) {
+    if (res.coilList?.tbody?.length > 0) {
       coilListData.list = res.coilList.tbody.map((item) => {
         return {
           ...item,
         };
       });
     }
-    if (res.systemParameter.tbody.length > 0) {
+    if (res.systemParameter?.tbody?.length > 0) {
       systemParameterData.list = res.systemParameter.tbody.map((item) => {
         return {
           ...item,
         };
       });
     }
+  }
+};
+
+//切换单位
+const handleUnitChange = async (param, newValue) => {
+  console.log(param, newValue, oldUnitValues[param.name]);
+  const res = await Api.changeUnit({
+    unitType: param.unitType,
+    unitOldValue: oldUnitValues[param.name],
+    unitNewValue: newValue,
+    inputvalue: param.value,
+  });
+  if (res.status === 1) {
+    param.value = res.outputvalue;
+    oldUnitValues[param.name] = newValue;
   }
 };
 
@@ -265,7 +382,7 @@ onMounted(() => {
           <el-icon v-if="secondId"><ArrowLeft /></el-icon>
           <span v-if="secondId">{{ proCateItem.title }}</span>
         </h5>
-        <div class="pipeline" v-if="productLoad.pipeline.is_show === 0">
+        <div class="pipeline" v-if="productLoad.pipeline.is_show === 1">
           <p>{{ productLoad.pipeline.title }}</p>
           <el-select v-model="pipe" @change="handlePipe">
             <el-option
@@ -299,7 +416,7 @@ onMounted(() => {
         <div class="txt" v-html="proCateItem.content"></div>
       </div>
       <div class="data">
-        <div class="data_a">
+        <div class="data_a" v-if="selectionP">
           <h5>
             工况参数
             <span>
@@ -308,12 +425,13 @@ onMounted(() => {
             </span>
           </h5>
           <div class="con">
-            <div
-              class="item"
-              v-if="proCateItem && proCateItem.is_select_refrigerant === 1"
-            >
+            <div class="item" v-if="proCateItem">
               <p>制冷剂</p>
-              <el-select v-model="refrigerant" @change="handleRefrigerant">
+              <el-select
+                v-model="refrigerant"
+                :disabled="proCateItem.is_select_refrigerant === 0"
+                @change="handleRefrigerant"
+              >
                 <el-option
                   v-for="item in refrigerantList.list"
                   :key="item.value"
@@ -322,56 +440,167 @@ onMounted(() => {
                 />
               </el-select>
             </div>
-            <div
-              class="item"
-              v-if="proCateItem && proCateItem.is_select_criteria === 1"
-            >
-              <p>选择标准</p>
-              <el-input value="R407" />
+            <div class="item" v-if="proCateItem">
+              <div
+                class="capacityRatioSet"
+                v-if="
+                  ['1', '5'].includes(cateId) &&
+                  selectionP?.qperatingParameter[7]
+                "
+              >
+                <p>选择标准</p>
+                <div class="list">
+                  <p>
+                    {{ selectionP?.qperatingParameter[7].options[0].title }}
+                  </p>
+                  <el-input
+                    v-model="selectionP.qperatingParameter[7].options[0].value"
+                    :disabled="proCateItem.is_select_criteria === 0"
+                  />
+                  <i>{{ selectionP?.qperatingParameter[7].options[0].unit }}</i>
+                </div>
+                <div class="list" v-if="cateId === '5'">
+                  <p>
+                    {{ selectionP?.qperatingParameter[8].options[0].title }}
+                  </p>
+                  <el-input
+                    v-model="selectionP.qperatingParameter[8].options[0].value"
+                    :disabled="proCateItem.is_select_criteria === 0"
+                  />
+                  <i>{{ selectionP?.qperatingParameter[8].options[0].unit }}</i>
+                </div>
+              </div>
+              <div
+                class="capacityRatioSet"
+                v-if="
+                  ['2', '3', '4', '6', '7', '8', '9', '10', '11'].includes(
+                    cateId
+                  ) && selectionP?.qperatingParameter[7]
+                "
+              >
+                <p>选择标准</p>
+                <div class="list">
+                  <p>
+                    <el-select
+                      v-model="selectionP.qperatingParameter[7].option"
+                      v-if="
+                        selectionP.qperatingParameter[7].tagType === 'select'
+                      "
+                      :disabled="proCateItem.is_select_criteria === 0"
+                    >
+                      <el-option
+                        v-for="items in selectionP.qperatingParameter[7]
+                          .options"
+                        :key="items.name"
+                        :label="items.title"
+                        :value="items.name"
+                      />
+                    </el-select>
+                  </p>
+                  <el-input
+                    v-model="
+                      selectionP.qperatingParameter[7].options.find(
+                        (items) =>
+                          items.name === selectionP.qperatingParameter[7].option
+                      ).value
+                    "
+                    v-if="selectionP.qperatingParameter[7].tagType === 'select'"
+                    :disabled="proCateItem.is_select_criteria === 0"
+                  />
+                  <el-input
+                    v-model="selectionP.qperatingParameter[7].options[0].value"
+                    :disabled="proCateItem.is_select_criteria === 0"
+                    v-else
+                  />
+                  <el-select
+                    v-model="
+                      selectionP.qperatingParameter[7].options.find(
+                        (items) =>
+                          items.name === selectionP.qperatingParameter[7].option
+                      ).unit
+                    "
+                    v-if="selectionP.qperatingParameter[7].tagType === 'select'"
+                    :disabled="proCateItem.is_select_criteria === 0"
+                    @change="
+                      (val) =>
+                        handleUnitChange(
+                          selectionP.qperatingParameter[7].options.find(
+                            (items) =>
+                              items.name ===
+                              selectionP.qperatingParameter[7].option
+                          ),
+                          val
+                        )
+                    "
+                  >
+                    <el-option
+                      v-for="items in selectionP.qperatingParameter[7].options.find(
+                        (items) =>
+                          items.name === selectionP.qperatingParameter[7].option
+                      ).unitOptions"
+                      :key="items"
+                      :label="items"
+                      :value="items"
+                    />
+                  </el-select>
+                  <el-select
+                    v-model="selectionP.qperatingParameter[7].options[0].unit"
+                    v-else
+                    :disabled="proCateItem.is_select_criteria === 0"
+                    @change="
+                      (val) =>
+                        handleUnitChange(
+                          selectionP.qperatingParameter[7].options[0],
+                          val
+                        )
+                    "
+                  >
+                    <el-option
+                      v-for="items in selectionP.qperatingParameter[7]
+                        .options[0].unitOptions"
+                      :key="items"
+                      :label="items"
+                      :value="items"
+                    />
+                  </el-select>
+                </div>
+                <div class="list listRadio" v-if="cateId === '8'">
+                  <p>
+                    <el-select
+                      v-model="selectionP.qperatingParameter[8].option"
+                      :disabled="proCateItem.is_select_criteria === 0"
+                    >
+                      <el-option
+                        v-for="items in selectionP.qperatingParameter[8]
+                          .options"
+                        :key="items.value"
+                        :label="items.title"
+                        :value="items.name"
+                      />
+                    </el-select>
+                  </p>
+                </div>
+              </div>
             </div>
             <div class="item">
-              <span>查询</span>
+              <span @click="getProductInfo">查询</span>
             </div>
           </div>
           <div class="con">
-            <div
-              class="item"
-              v-if="proCateItem && proCateItem.is_select_capacity === 1"
-            >
+            <div class="item" v-if="proCateItem">
               <h5>能力</h5>
               <div
                 class="list"
                 v-for="(item, index) in Object.values(
                   selectionP?.qperatingParameter || {}
-                )[0]?.options"
-                :key="index"
-              >
-                <p>{{ item.title }}</p>
-                <el-input v-model="item.value" />
-                <el-select v-model="item.unit">
-                  <el-option
-                    v-for="items in item.unitOptions"
-                    :key="items"
-                    :label="items"
-                    :value="items"
-                  />
-                </el-select>
-              </div>
-            </div>
-            <div
-              class="item"
-              v-if="proCateItem && proCateItem.is_select_evaporation === 1"
-            >
-              <h5>蒸发</h5>
-              <div
-                class="list"
-                v-for="(item, index) in Object.values(
-                  selectionP?.qperatingParameter || {}
-                ).slice(1, 4)"
+                ).slice(0, 1)"
                 :key="index"
               >
                 <p v-if="item.tagType === 'select'">
-                  <el-select v-model="item.option">
+                  <el-select
+                    v-model="item.option"
+                    :disabled="proCateItem.is_select_capacity === 0"
+                  >
                     <el-option
                       v-for="items in item.options"
                       :key="items.name"
@@ -380,21 +609,35 @@ onMounted(() => {
                     />
                   </el-select>
                 </p>
-                <p v-else>{{ item.options[0].title }}</p>
                 <el-input
                   v-model="
                     item.options.find((items) => items.name === item.option)
                       .value
                   "
+                  :disabled="proCateItem.is_select_capacity === 0"
                   v-if="item.tagType === 'select'"
                 />
-                <el-input v-model="item.options[0].value" v-else />
+                <el-input
+                  v-model="item.options[0].value"
+                  :disabled="proCateItem.is_select_capacity === 0"
+                  v-else
+                />
                 <el-select
                   v-model="
                     item.options.find((items) => items.name === item.option)
                       .unit
                   "
+                  :disabled="proCateItem.is_select_capacity === 0"
                   v-if="item.tagType === 'select'"
+                  @change="
+                    (val) =>
+                      handleUnitChange(
+                        item.options.find(
+                          (items) => items.name === item.option
+                        ),
+                        val
+                      )
+                  "
                 >
                   <el-option
                     v-for="items in item.options.find(
@@ -405,7 +648,12 @@ onMounted(() => {
                     :value="items"
                   />
                 </el-select>
-                <el-select v-model="item.options[0].unit" v-else>
+                <el-select
+                  v-model="item.options[0].unit"
+                  :disabled="proCateItem.is_select_capacity === 0"
+                  v-else
+                  @change="(val) => handleUnitChange(item.options[0], val)"
+                >
                   <el-option
                     v-for="items in item.options[0].unitOptions"
                     :key="items"
@@ -415,20 +663,20 @@ onMounted(() => {
                 </el-select>
               </div>
             </div>
-            <div
-              class="item"
-              v-if="proCateItem && proCateItem.is_select_condensation === 1"
-            >
-              <h5>冷凝</h5>
+            <div class="item" v-if="proCateItem">
+              <h5>蒸发</h5>
               <div
                 class="list"
                 v-for="(item, index) in Object.values(
                   selectionP?.qperatingParameter || {}
-                ).slice(4, 7)"
+                ).slice(1, 4)"
                 :key="index"
               >
                 <p v-if="item.tagType === 'select'">
-                  <el-select v-model="item.option">
+                  <el-select
+                    v-model="item.option"
+                    :disabled="proCateItem.is_select_evaporation === 0"
+                  >
                     <el-option
                       v-for="items in item.options"
                       :key="items.name"
@@ -443,15 +691,30 @@ onMounted(() => {
                     item.options.find((items) => items.name === item.option)
                       .value
                   "
+                  :disabled="proCateItem.is_select_evaporation === 0"
                   v-if="item.tagType === 'select'"
                 />
-                <el-input v-model="item.options[0].value" v-else />
+                <el-input
+                  v-model="item.options[0].value"
+                  :disabled="proCateItem.is_select_evaporation === 0"
+                  v-else
+                />
                 <el-select
                   v-model="
                     item.options.find((items) => items.name === item.option)
                       .unit
                   "
+                  :disabled="proCateItem.is_select_evaporation === 0"
                   v-if="item.tagType === 'select'"
+                  @change="
+                    (val) =>
+                      handleUnitChange(
+                        item.options.find(
+                          (items) => items.name === item.option
+                        ),
+                        val
+                      )
+                  "
                 >
                   <el-option
                     v-for="items in item.options.find(
@@ -462,7 +725,89 @@ onMounted(() => {
                     :value="items"
                   />
                 </el-select>
-                <el-select v-model="item.options[0].unit" v-else>
+                <el-select
+                  v-model="item.options[0].unit"
+                  :disabled="proCateItem.is_select_evaporation === 0"
+                  v-else
+                  @change="(val) => handleUnitChange(item.options[0], val)"
+                >
+                  <el-option
+                    v-for="items in item.options[0].unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
+                </el-select>
+              </div>
+            </div>
+            <div class="item" v-if="proCateItem">
+              <h5>冷凝</h5>
+              <div
+                class="list"
+                v-for="(item, index) in Object.values(
+                  selectionP?.qperatingParameter || {}
+                ).slice(4, 7)"
+                :key="index"
+              >
+                <p v-if="item.tagType === 'select'">
+                  <el-select
+                    v-model="item.option"
+                    :disabled="proCateItem.is_select_condensation === 0"
+                  >
+                    <el-option
+                      v-for="items in item.options"
+                      :key="items.name"
+                      :label="items.title"
+                      :value="items.name"
+                    />
+                  </el-select>
+                </p>
+                <p v-else>{{ item.options[0].title }}</p>
+                <el-input
+                  v-model="
+                    item.options.find((items) => items.name === item.option)
+                      .value
+                  "
+                  :disabled="proCateItem.is_select_condensation === 0"
+                  v-if="item.tagType === 'select'"
+                />
+                <el-input
+                  v-model="item.options[0].value"
+                  :disabled="proCateItem.is_select_condensation === 0"
+                  v-else
+                />
+                <el-select
+                  v-model="
+                    item.options.find((items) => items.name === item.option)
+                      .unit
+                  "
+                  :disabled="proCateItem.is_select_condensation === 0"
+                  v-if="item.tagType === 'select'"
+                  @change="
+                    (val) =>
+                      handleUnitChange(
+                        item.options.find(
+                          (items) => items.name === item.option
+                        ),
+                        val
+                      )
+                  "
+                >
+                  <el-option
+                    v-for="items in item.options.find(
+                      (items) => items.name === item.option
+                    ).unitOptions"
+                    :key="items"
+                    :label="items"
+                    :value="items"
+                  />
+                </el-select>
+                <el-select
+                  v-model="item.options[0].unit"
+                  :disabled="proCateItem.is_select_condensation === 0"
+                  v-else
+                  @change="(val) => handleUnitChange(item.options[0], val)"
+                >
                   <el-option
                     v-for="items in item.options[0].unitOptions"
                     :key="items"
@@ -526,12 +871,7 @@ onMounted(() => {
                     产品型号 <span>{{ productInfo.proList2.title }}</span>
                     <i>三维简图</i>
                   </h5>
-                  <el-table
-                    :data="proList2Data.list"
-                    border
-                    highlight-current-row
-                    @current-change="handleProductDataChange"
-                  >
+                  <el-table :data="proList2Data.list" border>
                     <el-table-column
                       :property="index.toString()"
                       :label="item"
@@ -540,16 +880,14 @@ onMounted(() => {
                     />
                   </el-table>
                 </div>
-                <div class="table_data1">
+                <div
+                  class="table_data1"
+                  v-if="productInfo.coilList.is_show === 1"
+                >
                   <h5>
                     线圈型号 <span>{{ productInfo.coilList.title }}</span>
                   </h5>
-                  <el-table
-                    :data="coilListData.list"
-                    border
-                    highlight-current-row
-                    @current-change="handleProductDataChange"
-                  >
+                  <el-table :data="coilListData.list" border>
                     <el-table-column
                       :property="index.toString()"
                       :label="item"
@@ -562,18 +900,16 @@ onMounted(() => {
             </el-tab-pane>
             <el-tab-pane label="系统参数" name="2">
               <div class="dadaTypeBox">
-                <div class="table_data1">
+                <div
+                  class="table_data1"
+                  v-if="productInfo.systemParameter.is_show === 1"
+                >
                   <h5>
                     压缩机效率:{{ productInfo.systemParameter.title }}
                     系统参数仅供参考
                   </h5>
                   <div class="table_data3">
-                    <el-table
-                      :data="systemParameterData.list"
-                      border
-                      highlight-current-row
-                      @current-change="handleProductDataChange"
-                    >
+                    <el-table :data="systemParameterData.list" border>
                       <el-table-column
                         :property="index.toString()"
                         :label="item"
@@ -752,6 +1088,14 @@ onMounted(() => {
                 width: 100px;
                 margin-bottom: 0px;
                 padding-right: 10px;
+              }
+            }
+            .capacityRatioSet {
+              i {
+                font-size: 13px;
+                color: #080808;
+                margin-left: 6px;
+                font-style: normal;
               }
             }
           }
@@ -944,6 +1288,13 @@ onMounted(() => {
         p {
           .el-select {
             width: 90px;
+          }
+        }
+      }
+      .listRadio {
+        p {
+          .el-select {
+            width: 120px;
           }
         }
       }

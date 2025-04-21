@@ -1,5 +1,5 @@
-import request from './http.js'
-import apiURL from './apiUrl';
+import request from "./http.js";
+import apiURL from "./apiUrl";
 
 export const Api = new (class {
   constructor() {
@@ -8,15 +8,15 @@ export const Api = new (class {
       this[url] = (param = {}) => {
         return new Promise((resolve, reject) => {
           request[type](code, param)
-            .then((res) =>{
+            .then((res) => {
               resolve(res);
             })
             .catch((e) => {
               reject(e);
-            })
-        })
-      }
-    })
+            });
+        });
+      };
+    });
   }
 })();
 

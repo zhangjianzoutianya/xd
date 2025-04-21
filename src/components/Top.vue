@@ -1,126 +1,129 @@
 <script setup>
-import { ref, reactive, computed, inject } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from '@/stores/index';
-import { Search ,ArrowRight,StarFilled} from '@element-plus/icons-vue'
+import { ref, reactive, computed, inject } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "@/stores/index";
+import { Search, ArrowRight, StarFilled } from "@element-plus/icons-vue";
 //API
-const Api = inject('Api');
+const Api = inject("Api");
 
 const router = useRouter();
-const store = useStore(); 
+const store = useStore();
 
 //搜索
-const searchKey = ref('')
+const searchKey = ref("");
 //语言
 const language = ref(store.language || 1);
-const languageValue = ref(store.languageOption.find(item => item.value === language.value).label);
+const languageValue = ref(
+  store.languageOption.find((item) => item.value === language.value).label
+);
 
 //控制弹窗是否显示
-const showLang = ref(false)
+const showLang = ref(false);
 //取消选择语言
-const cancleLang=()=>{
-  showLang.value=false
-}
+const cancleLang = () => {
+  showLang.value = false;
+};
 //选择语言弹窗
-const showClick=()=>{
-  console.log(language.value, '123')
-  showLang.value = true
-}
+const showClick = () => {
+  console.log(language.value, "123");
+  showLang.value = true;
+};
 
 //弹窗认证证书
-const showCert=ref(false)
-const cancelCert=()=>{
-  showCert.value=false
-}
+const showCert = ref(false);
+const cancelCert = () => {
+  showCert.value = false;
+};
 //认证证书弹窗
-const  clickCert=()=>{
-  showCert.value=true
-}
+const clickCert = () => {
+  showCert.value = true;
+};
 //选择制冷剂弹窗
-const showRefrig=ref(false)
-const openRefrig=()=>{
-  showRefrig.value=true
-}
-const cancelRefrig=()=>{
-  showRefrig.value=false
-}
+const showRefrig = ref(false);
+const openRefrig = () => {
+  showRefrig.value = true;
+};
+const cancelRefrig = () => {
+  showRefrig.value = false;
+};
 
 //选择语言
 const changeLanguage = () => {
   showLang.value = false;
-  languageValue.value = store.languageOption.find(item => item.value === language.value).label;
+  languageValue.value = store.languageOption.find(
+    (item) => item.value === language.value
+  ).label;
   store.setLanguage(language.value);
   setTimeout(() => {
     window.location.reload();
   }, 100);
-}
-
+};
 
 //产品大类跳转
-const goProduct = () =>{
+const goProduct = () => {
   router.push({
-    name: 'Product'
-  })
-}
+    name: "Product",
+  });
+};
 //系统应用跳转
-const goApplicat = () =>{
+const goApplicat = () => {
   router.push({
-    name: 'Applicat'
-  })
-}
+    name: "Applicat",
+  });
+};
 //logo
-const goHome = () =>{
+const goHome = () => {
   router.push({
-    name: 'Product'
-  })
-}
-  //登陆页面
-const goLogin = () =>{
+    name: "Product",
+  });
+};
+//登陆页面
+const goLogin = () => {
   router.push({
-    name: 'Login'
-  })
-}
+    name: "Login",
+  });
+};
 
 //created
-const onCreated = async () => {
-
-}
+const onCreated = async () => {};
 onCreated();
-
 </script>
 
 <template>
   <div class="loginTop">
     <div class="logo">
-      <img src="@/assets/images/logo2.png" @click="goHome"/>
+      <img src="@/assets/images/logo2.png" @click="goHome" />
       <div class="menuTop">
         <span @click="goProduct">产品大类</span>
         <span @click="goApplicat">系统应用</span>
-        <span @click="openRefrig">请选择制冷剂<el-icon><ArrowRight /></el-icon></span>
-        <span @click="clickCert">认证证书<el-icon><ArrowRight /></el-icon></span>
+        <span @click="openRefrig"
+          >请选择制冷剂<el-icon><ArrowRight /></el-icon
+        ></span>
+        <span @click="clickCert"
+          >认证证书<el-icon><ArrowRight /></el-icon
+        ></span>
       </div>
       <el-input
-          v-model="searchKey" size="large"  
-          placeholder="请输入搜索内容"
-          :prefix-icon="Search"
-        />
+        v-model="searchKey"
+        size="large"
+        placeholder="请输入搜索内容"
+        :prefix-icon="Search"
+      />
     </div>
     <div class="lang">
       <!-- <span @click="goLogin">登入</span>
       <span>｜</span> -->
-      <span @click="showClick">{{ languageValue}}</span>
-    </div> 
+      <span @click="showClick">{{ languageValue }}</span>
+    </div>
   </div>
 
-  <div class="language"  v-if="showLang">   
-     <div class="langText">
+  <div class="language" v-if="showLang">
+    <div class="langText">
       <h5>提示</h5>
       <p>Tips：请选择语言</p>
       <div class="input">
         <span>语言</span>
-        <el-select 
-          v-model="language" 
-          size="large">
+        <el-select v-model="language" size="large">
           <el-option
             v-for="item in store.languageOption"
             :key="item.key"
@@ -129,148 +132,135 @@ onCreated();
           />
         </el-select>
       </div>
-      <div class="btn"> 
+      <div class="btn">
         <span @click="cancleLang">取消</span>
         <span class="btnSure" @click="changeLanguage">确定</span>
       </div>
-     </div>
-
+    </div>
   </div>
 
   <div class="certificate" v-if="showCert">
-     <div class="ficate">
+    <div class="ficate">
       <h5>认证证书</h5>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
       <div class="input">
-        <el-input
-          v-model="userName"
-          placeholder="CE"
-        />
+        <el-input v-model="userName" placeholder="CE" />
       </div>
-      <div class="btn"> 
+      <div class="btn">
         <span @click="cancelCert" class="cancel">取消</span>
         <span class="clear"> 清除设置</span>
         <span>选定</span>
         <span>确定</span>
       </div>
-
-
-     </div>
+    </div>
   </div>
 
   <div class="refrigerant" v-if="showRefrig">
-     <div class="gerant">
+    <div class="gerant">
       <h5>请选择制冷剂</h5>
-          <div class="gerantList">        
-              <div class="gerantLeft">
-              <div class="input">
-                <el-input
-                v-model="searchKey"
-                placeholder="搜索型号"
-                :prefix-icon="Search"
-              />
-              </div>
-              <div class="collect">
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-                <div class="collectList">
-                  <span>R22</span>
-                  <span>收藏<el-icon><StarFilled /></el-icon></span>
-                </div>
-              </div>
-              </div>
-              <div class="gerantRight">
-                <h5>我的收藏</h5>
-                <img src="@/assets/images/shoucang.png">
-                <p>暂无收藏</p>
-                <div class="gerantBtn">
-                    <span @click="cancelRefrig" >取消</span>
-                    <span class="clearBtn">清除设置</span>
-                    <span class="sureBtn">确认</span>
-                </div>
-              </div>
-        
-
+      <div class="gerantList">
+        <div class="gerantLeft">
+          <div class="input">
+            <el-input
+              v-model="searchKey"
+              placeholder="搜索型号"
+              :prefix-icon="Search"
+            />
+          </div>
+          <div class="collect">
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+            <div class="collectList">
+              <span>R22</span>
+              <span
+                >收藏<el-icon><StarFilled /></el-icon
+              ></span>
+            </div>
+          </div>
         </div>
-     </div>
-
+        <div class="gerantRight">
+          <h5>我的收藏</h5>
+          <img src="@/assets/images/shoucang.png" />
+          <p>暂无收藏</p>
+          <div class="gerantBtn">
+            <span @click="cancelRefrig">取消</span>
+            <span class="clearBtn">清除设置</span>
+            <span class="sureBtn">确认</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
 </template>
 
 <style scoped lang="less">
-.loginTop{
+.loginTop {
   position: fixed;
   top: 0;
   left: 0;
@@ -279,21 +269,20 @@ onCreated();
   justify-content: space-between;
   z-index: 10;
   background-color: #f0f0f0;
-  padding: 30px  7% 10px 7%;
-  .logo{
+  padding: 30px 7% 10px 7%;
+  .logo {
     display: flex;
     align-items: center;
     position: relative;
-    >img{
+    > img {
       width: 127px;
       margin-right: 40px;
       cursor: pointer;
     }
-   
   }
-  .menuTop{
+  .menuTop {
     display: flex;
-    span{
+    span {
       height: 55px;
       line-height: 55px;
       background-color: #9799a6;
@@ -306,7 +295,7 @@ onCreated();
       cursor: pointer;
     }
   }
-  .lang{
+  .lang {
     display: flex;
     align-items: center;
     background-color: #494a52;
@@ -316,7 +305,7 @@ onCreated();
     width: 180px;
     border-radius: 10px;
     justify-content: center;
-    span{
+    span {
       font-size: 15px;
       color: #ffffff;
       line-height: 1.5;
@@ -324,7 +313,7 @@ onCreated();
     }
   }
 }
-.language{
+.language {
   background-color: rgba(0, 0, 0, 0.6);
   position: fixed;
   width: 100%;
@@ -332,7 +321,7 @@ onCreated();
   left: 0;
   top: 0;
   z-index: 12;
-  .langText{
+  .langText {
     width: 1100px;
     height: 370px;
     background-color: #ffffff;
@@ -343,23 +332,23 @@ onCreated();
     top: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%); 
+    -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
-    h5{
+    h5 {
       margin-bottom: 50px;
       font-size: 25px;
       color: #080808;
     }
-    p{
+    p {
       font-size: 25px;
       color: #080808;
     }
-    .input{
+    .input {
       display: flex;
       align-items: center;
       margin-top: 25px;
-      span{
+      span {
         flex: 0 0 110px;
         font-size: 20px;
         color: #080808;
@@ -367,32 +356,31 @@ onCreated();
         margin-right: 20px;
       }
     }
-    .btn{
+    .btn {
       display: flex;
       justify-content: flex-end;
       margin-top: 70px;
-      span{
+      span {
         width: 105px;
         height: 50px;
-        line-height: 48px;  
+        line-height: 48px;
         border: 1px solid #080808;
         color: #080808;
-        text-align: center;  
+        text-align: center;
         border-radius: 5px;
-        margin-left: 15px;  
-        font-size: 15px; 
+        margin-left: 15px;
+        font-size: 15px;
       }
-      .btnSure{
+      .btnSure {
         background-color: #0059a6;
         border: 1px solid #0059a6;
         color: #ffffff;
       }
     }
   }
-  
 }
 
-.certificate{
+.certificate {
   background-color: rgba(0, 0, 0, 0.6);
   position: fixed;
   width: 100%;
@@ -400,7 +388,7 @@ onCreated();
   left: 0;
   top: 0;
   z-index: 11;
-  .ficate{
+  .ficate {
     background: #ffffff;
     width: 1100px;
     height: 650px;
@@ -412,43 +400,43 @@ onCreated();
     top: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%); 
+    -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
-    h5{
+    h5 {
       margin-bottom: 50px;
       font-size: 25px;
       color: #080808;
     }
-    .input{
+    .input {
       margin-bottom: 15px;
     }
-    .btn{
+    .btn {
       display: flex;
       justify-content: flex-end;
       margin-top: 70px;
-      span{
+      span {
         width: 80px;
         height: 30px;
-        line-height: 30px;  
+        line-height: 30px;
         font-size: 15px;
         color: #fff;
-        text-align: center;  
+        text-align: center;
         border-radius: 5px;
-        margin-left: 15px;   
+        margin-left: 15px;
         background-color: #0059a6;
       }
-      .cancel{
+      .cancel {
         color: #080808;
         background-color: #ededed;
       }
-      .clear{
+      .clear {
         background-color: #3ea3ef;
       }
     }
   }
 }
-.refrigerant{
+.refrigerant {
   background-color: rgba(0, 0, 0, 0.6);
   position: fixed;
   width: 100%;
@@ -456,7 +444,7 @@ onCreated();
   left: 0;
   top: 0;
   z-index: 11;
-  .gerant{
+  .gerant {
     background: #ffffff;
     width: 900px;
     height: 650px;
@@ -468,99 +456,94 @@ onCreated();
     top: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%); 
+    -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
-    .input{
+    .input {
       margin-bottom: 20px;
     }
-    h5{
+    h5 {
       margin-bottom: 50px;
       font-size: 25px;
       color: #080808;
     }
-    .gerantList{
+    .gerantList {
       display: flex;
       justify-content: space-between;
-      .gerantLeft{
+      .gerantLeft {
         width: 400px;
-        .collect{
-          .collectList{
+        .collect {
+          .collectList {
             border: 1px solid #666666;
             border-radius: 10px;
             display: flex;
-            justify-content:space-between;
-            align-items: center; 
+            justify-content: space-between;
+            align-items: center;
             padding: 0 10px;
             height: 30px;
             line-height: 28px;
             margin-bottom: 10px;
-            span{
+            span {
               color: #666666;
               font-size: 17px;
-              i{
+              i {
                 font-size: 20px;
                 vertical-align: text-bottom;
               }
             }
           }
         }
-    }
-    .gerantRight{
-      h5{
-        color: #666666;
-        font-size: 16px;
       }
-      p{
-        color: #666666;
-        font-size: 16px;
-        text-align: center;
-        margin-top: 20px;
-      }
-      .gerantBtn{
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 120px;
-        span{
-          padding: 0 20px;
-          height: 30px;
-          line-height: 30px;
-          background-color: #ededed;
-          color: #606060;
-          display: inline-block;
-          border-radius: 5px;
-          margin-left: 10px;
+      .gerantRight {
+        h5 {
+          color: #666666;
           font-size: 16px;
-          cursor: pointer;
         }
-        .clearBtn{
-          background-color: #3ea3ef;
-          color: #fff;
+        p {
+          color: #666666;
+          font-size: 16px;
+          text-align: center;
+          margin-top: 20px;
         }
-        .sureBtn{
-          background-color: #0059a6;
-          color: #fff;
+        .gerantBtn {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 120px;
+          span {
+            padding: 0 20px;
+            height: 30px;
+            line-height: 30px;
+            background-color: #ededed;
+            color: #606060;
+            display: inline-block;
+            border-radius: 5px;
+            margin-left: 10px;
+            font-size: 16px;
+            cursor: pointer;
+          }
+          .clearBtn {
+            background-color: #3ea3ef;
+            color: #fff;
+          }
+          .sureBtn {
+            background-color: #0059a6;
+            color: #fff;
+          }
         }
       }
     }
-
-    }
-  
-
-   
   }
-  }
-
+}
 </style>
 <style lang="less">
-.loginTop{
-  .logo{
-    .el-input{
+.loginTop {
+  .logo {
+    .el-input {
       width: 580px;
       margin-right: 10px;
-      .el-input__wrapper{
+      .el-input__wrapper {
         border-radius: 8px;
-        .el-input__inner{
+        .el-input__inner {
           line-height: 55px;
           height: 55px;
           text-align: center;
